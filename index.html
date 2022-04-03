@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>고양이 가라사대</title>
+    </head>
+    <style>
+        body {
+            text-align: center;
+        }
+        .main-card button {
+            position: relative;
+            left: -45px;
+            bottom: 15px;
+        }
+        .favorites {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+    </style>
+    <body>
+        <div id="app"></div>
+        <script
+            src="https://unpkg.com/react@17/umd/react.development.js"
+            crossorigin="crossorigin"></script>
+        <script
+            src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"
+            crossorigin="crossorigin"></script>
+        <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+        <script type="text/babel">
+            console.log("야옹");
+
+      const Title = (props) => {
+        return <h1>{props.children}</h1>;
+      }
+
+      const Form = () => {
+        function handleFormSubmit(event) {
+          //HTML기본 동작이 form전송하면 브라우저가 reflesh 되는게 기본 동작이라 
+          //그걸 막아줌
+          event.preventDefault();
+          console.log("폼 전송됨");
+        }
+
+        return (
+          <form onSubmit={handleFormSubmit}>
+            <input 
+              type="text" 
+              name="name" 
+              placeholder="영어 대사를 입력해주세요" 
+            />
+            <button type="submit">생성</button>
+          </form>
+        );
+      }
+
+      function CatItem(props) {
+        return (
+          <li>
+            <img 
+              src={props.img} 
+              style={{ width: "150px" }}/>
+          </li> //인라인 스타일링. style props를 넘기고, 원하는 Object를 key와 value로 적어주면 됌
+        );
+      }
+
+      function Favorites() {
+        return (
+          <ul className="favorites">
+            <CatItem img="https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn" />
+            <CatItem img="https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript" />
+          </ul>
+        );
+      }
+
+      const MainCard = ({img}) => { //ES6+ 문법으로 props라는 이름 대신 {img}로 바로 내려받을 수 있음
+        //리액트에서 이름을 handle어쩌고Click, handle어쩌고MouseOver 이런식으로 이름을 짓는게 관례
+        function handleHeartClick () {
+          console.log("하트 눌렀음");
+        }
+        function handleHeartMouseOver() {
+          console.log("하트 스쳐 지나감")
+        }
+        return (
+          <div className="main-card">
+            <img
+              src={img}
+              alt="고양이"
+              width="400"
+            />
+            <button 
+              onClick={handleHeartClick} 
+              onMouseOver={handleHeartMouseOver}
+            >
+              🤍
+            </button>
+          </div>
+        );
+      }
+
+      const app = (
+        <div>
+          <Title>1번 고양이 가라사대</Title>
+          <Form />
+          <MainCard img="https://cataas.com/cat/60b73094e04e18001194a309/says/react"/>
+          <Favorites />
+        </div>
+      );
+
+      const 여기다가그려 = document.querySelector('#app');
+      ReactDOM.render(app, 여기다가그려)
+
+    </script>
+  </body>
+</html>
