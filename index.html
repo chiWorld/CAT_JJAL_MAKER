@@ -1,120 +1,172 @@
 <!DOCTYPE html>
 <html lang="ko">
-    <head>
-        <meta charset="UTF-8"/>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>고양이 가라사대</title>
-    </head>
-    <style>
-        body {
-            text-align: center;
-        }
-        .main-card button {
-            position: relative;
-            left: -45px;
-            bottom: 15px;
-        }
-        .favorites {
-            list-style: none;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-    </style>
-    <body>
-        <div id="app"></div>
-        <script
-            src="https://unpkg.com/react@17/umd/react.development.js"
-            crossorigin="crossorigin"></script>
-        <script
-            src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"
-            crossorigin="crossorigin"></script>
-        <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-        <script type="text/babel">
-            console.log("야옹");
 
-      const Title = (props) => {
-        return <h1>{props.children}</h1>;
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>고양이 가라사대</title>
+</head>
+<style>
+  body {
+    text-align: center;
+  }
+
+  .main-card button {
+    position: relative;
+    left: -45px;
+    bottom: 15px;
+  }
+
+  .favorites {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+</style>
+
+<body>
+  <div id="app"></div>
+  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin="crossorigin"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin="crossorigin"></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  <script type="text/babel">
+    const jsonLocalStorage = {
+      setItem: (key, value) => {
+        localStorage.setItem(key, JSON.stringify(value));
+      },
+      getItem: (key) => {
+        return JSON.parse(localStorage.getItem(key));
+      },
+    };
+
+    const Title = (props) => {
+      return <h1>{props.children}</h1>;
+    }
+
+    const Form = ({updateMainCat}) => {
+      //폼 검증(form validation) : 사용자들이 폼을 쓸 때 일어나는 에러 케이스 검증
+      const includesHangul = (text) => /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/i.test(text); //1. 한글은 입력할 수 없습니다.
+      const [value, setValue] = React.useState("");
+      const [errorMessage, setErrorMessage] = React.useState('');
+
+      function handleInputChange(e) {
+        const userValue = e.target.value;
+        setErrorMessage("");
+        if(includesHangul(userValue)) {
+          setErrorMessage("한글은 입력할 수 없습니다.");
+        }
+        setValue(userValue.toUpperCase()); //toUpperCase = 소문자로 입력해도 대문자로 입력되게 함.
       }
 
-      const Form = () => {
-        function handleFormSubmit(event) {
-          //HTML기본 동작이 form전송하면 브라우저가 reflesh 되는게 기본 동작이라 
-          //그걸 막아줌
-          event.preventDefault();
-          console.log("폼 전송됨");
+      function handleFormSubmit(e) {
+        e,preventDefault(); //HTML기본 동작이 form전송하면 브라우저가 reflesh 되는게 기본 동작이라 그걸 막아줌
+        setErrorMessage("");
+
+        if(value == '') {
+          setErrorMessage("빈 값으로 만들 수 없습니다.");
+          return;
         }
-
-        return (
-          <form onSubmit={handleFormSubmit}>
-            <input 
-              type="text" 
-              name="name" 
-              placeholder="영어 대사를 입력해주세요" 
-            />
-            <button type="submit">생성</button>
-          </form>
-        );
+        updateMainCat();
       }
 
-      function CatItem(props) {
-        return (
-          <li>
-            <img 
-              src={props.img} 
-              style={{ width: "150px" }}/>
-          </li> //인라인 스타일링. style props를 넘기고, 원하는 Object를 key와 value로 적어주면 됌
-        );
-      }
 
-      function Favorites() {
-        return (
-          <ul className="favorites">
-            <CatItem img="https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn" />
-            <CatItem img="https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript" />
-          </ul>
-        );
-      }
+      return (
+        <form onSubmit={handleFormSubmit}>
+          <input 
+            type="text" 
+            name="name" 
+            placeholder="영어 대사를 입력해주세요" 
+            value={value}
+            onChange={handleInputChange}
+          />
+          <button type="submit">생성</button>
+          <p style={{ color: "red" }}>{errorMessage}</p>
+        </form>
+      );
+    }
 
-      const MainCard = ({img}) => { //ES6+ 문법으로 props라는 이름 대신 {img}로 바로 내려받을 수 있음
-        //리액트에서 이름을 handle어쩌고Click, handle어쩌고MouseOver 이런식으로 이름을 짓는게 관례
-        function handleHeartClick () {
-          console.log("하트 눌렀음");
-        }
-        function handleHeartMouseOver() {
-          console.log("하트 스쳐 지나감")
-        }
-        return (
-          <div className="main-card">
-            <img
-              src={img}
-              alt="고양이"
-              width="400"
-            />
-            <button 
-              onClick={handleHeartClick} 
-              onMouseOver={handleHeartMouseOver}
-            >
-              🤍
-            </button>
-          </div>
-        );
-      }
+    function CatItem(props) {
+      return (
+        <li>
+          <img 
+            src={props.img} 
+            style={{ width: "150px" }}/>
+        </li> //인라인 스타일링. style props를 넘기고, 원하는 Object를 key와 value로 적어주면 됌
+      );
+    }
 
-      const app = (
-        <div>
-          <Title>1번 고양이 가라사대</Title>
-          <Form />
-          <MainCard img="https://cataas.com/cat/60b73094e04e18001194a309/says/react"/>
-          <Favorites />
+    function Favorites({favorites}) {
+      return (
+        <ul className="favorites">
+          {favorites.map((cat) => (
+            <CatItem img={cat} key={cat} />
+          ))}            
+        </ul>
+      );
+    }
+
+    const MainCard = ({img, onHeartClick}) => { //ES6+ 문법으로 props라는 이름 대신 {img}로 바로 내려받을 수 있음
+      return (
+        <div className="main-card">
+          <img
+            src={img}
+            alt="고양이"
+            width="400"
+          />
+          <button 
+            onClick={onHeartClick} 
+          >
+            🤍
+          </button>
         </div>
       );
+    }
 
-      const 여기다가그려 = document.querySelector('#app');
-      ReactDOM.render(app, 여기다가그려)
+    const App = () => {
+      const CAT1 = "https://cataas.com/cat/60b73094e04e18001194a309/says/react";
+      const CAT2 = "https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn";
+      const CAT3 = "https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript";
+      
+      //Form 컴포넌트의 counter 상태 끌어 올림(lifting state up)
+      const [counter, setCounter] = React.useState(
+        jsonLocalStorage.getItem("counter")
+      );
+      const [mainCatImg, setMainCatImg] = React.useState(CAT1);
+      const [favorites, setFavorites] = React.useState(
+        jsonLocalStorage.getItem("favorites") || [] //초기값이 null이면 빈 배열로 저장해줘라
+      );
+      
+      function updateMainCat() {
+        setMainCatImg(CAT2);
+        const nextCounter = counter + 1;
+        setCounter(nextCounter); //생성될 때마다 n번째 문구 변경
+        jsonLocalStorage.setItem("counter", nextCounter); //로컬데이터베이스에 저장하면 리플레쉬 되어도 값이 초기화되지 않음
+      }
+
+      //React Name Convention : 이름을 handle어쩌고Click, handle어쩌고MouseOver
+      function handleHeartClick () {
+        const nextFavorites = [...favorites, mainCatImg] //ES6+ 스프레드 오퍼레이터 문법
+        setFavorites(nextFavorites);
+        jsonLocalStorage.setItem('favorites', nextFavorites);
+      }
+
+      return (
+        <div>
+          <Title>{counter}번 고양이 가라사대</Title>
+          <Form updateMainCat={updateMainCat}/>
+          <MainCard img={mainCatImg} onHeartClick={handleHeartClick}/>
+          <Favorites favorites={favorites}/>
+        </div>
+      );
+    };
+
+    const 여기다가그려 = document.querySelector('#app');
+    ReactDOM.render(<App />, 여기다가그려)
 
     </script>
-  </body>
+</body>
+
 </html>
