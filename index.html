@@ -33,6 +33,7 @@
   <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin="crossorigin"></script>
   <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
   <script type="text/babel">
+    //로컬스토리지 - 브라우저에 데이터 저장하기 ( 7일까지 저장 가능)
     const jsonLocalStorage = {
       setItem: (key, value) => {
         localStorage.setItem(key, JSON.stringify(value));
