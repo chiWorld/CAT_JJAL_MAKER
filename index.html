@@ -173,7 +173,7 @@
         async function updateMainCat(value) {
           const newCat = await fetchCat(value);
           setMainCat(newCat);
-          //미스메치 때문에 하나의 함수로 짜주는 것이 좋음 / prev : 기존 값
+          //미스메치 때문에 하나의 함수로 짜주는 것이 좋음 / prev(previus) : 기존 값
           setCounter((prev) => {
             const nextCounter = prev + 1;
             jsonLocalStorage.setItem("counter", nextCounter);
